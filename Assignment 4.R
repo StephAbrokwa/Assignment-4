@@ -18,7 +18,14 @@ View(ufo) # Updated datset
 
 # 3. Remove the rows that do not have Country information
 
+ufo <- ufo[!is.na(ufo$country), ] # Remove rows with missing country information
+View(ufo) # Updated dataset 
+
 # 4. Convert Datetime and Date_Posted columns into appropriate formats 
+
+ufo$datetime <- as.POSIXct(ufo$datetime, format = "%Y-%m-%d %H:%M") # Convert Datetime column to the appropriate format (as.POSIXct)
+ufo$date_posted <- as.Date(ufo$date_posted, format = "%d-%m-%Y") # Convert Date_posted column to the appropriate format (as.Date)
+View(ufo) # Updated dataset 
 
 # 5. Figure out a way to identify possible hoax reports. Create a new boolean column "is_hoax", and populate this column with TRUE if the sighting is a possible hoax, FALSE if otherwise 
 
