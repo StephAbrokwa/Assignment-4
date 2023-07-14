@@ -21,6 +21,8 @@ View(ufo) # Updated datset
 ufo <- ufo[!is.na(ufo$country), ] # Remove rows with missing country information
 View(ufo) # Updated dataset 
 
+# BONUS: Try to extract the information in brackets in the City column and impute that value in the Country column
+
 # 4. Convert Datetime and Date_Posted columns into appropriate formats 
 
 ufo$datetime <- as.POSIXct(ufo$datetime, format = "%Y-%m-%d %H:%M") # Convert Datetime column to the appropriate format (as.POSIXct)
