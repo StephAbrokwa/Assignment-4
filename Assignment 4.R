@@ -22,6 +22,7 @@ ufo <- ufo[!is.na(ufo$country), ] # Remove rows with missing country information
 View(ufo) # Updated dataset 
 
 # BONUS: Try to extract the information in brackets in the City column and impute that value in the Country column
+    # Not attempted 
 
 # 4. Convert Datetime and Date_Posted columns into appropriate formats 
 
@@ -35,7 +36,7 @@ View(ufo) # Updated dataset
 ufo$is_hoax <- FALSE 
 
 for (i in 1:nrow(ufo)) {
-  if (!is.na(ufo$comments[i]) && # Check if the column is not NA and contains the words HOAX, Hoax, or hoax 
+  if (!is.na(ufo$comments[i]) && # Check if the column is not NA and contains the words HOAX, Hoax, or hoax - this code includes all versions of the word "hoax" that can be found within the report 
       (grepl("HOAX", ufo$comments[i], ignore.case = TRUE) ||
        grepl("Hoax", ufo$comments[i], ignore.case = TRUE) ||
        grepl("hoax", ufo$comments[i], ignore.case = TRUE))) {
@@ -63,7 +64,7 @@ summary_table <- data.frame(
 summary_table$percentage_hoax.Var1 <- NULL 
 
 # Print the table
-print(summary_table)
+print(summary_table) # percentage hoax/country will be found it the right most column; also reports the country, the # hoax sightings and the total sightings for each country 
 
 # 7. Add another column to the dataset (report_delay) and populate with the time difference in days, between the date of the sighting and the date it was reported 
 
@@ -81,6 +82,8 @@ View(ufo) # Updated dataset
 ufo <- ufo[ufo$report_delay >= 0 | as.Date(ufo$date_posted) == as.Date(ufo$datetime), ] # Keeps all the rows where the report delay is greater than or equal to 0 and all row where the dates of date_posted and datetime are the same 
 rownames(ufo) <- NULL # Reset row index after removing rows 
 View(ufo) # Updated dataset 
+# Note: Row 24 has a value of -1 in the report_delay section, but that is only due to the time (H:M:S) of the date_time section, but that is not the format of the date_posted column
+        # This code also includes the value where date_time section and date_posted are the same regardless of the time value in the date_time section
 
 # 9. Create a table reporting the average report_delay per country 
 
@@ -95,12 +98,13 @@ print(avg_report_delay)
 # Missingness - 1 NA value 
 missing_values <- sum(is.na(ufo$duration_seconds)) # Displays that only 1 row contains a missing value 
 missing_values
-rows_missing <- which(is.na(ufo$duration_seconds)) # Indicates which row that is (row 8937) - there is no information found within this row therefore it will be removed from the dataset 
+rows_missing <- which(is.na(ufo$duration_seconds)) # Indicates which row that is missing - there is no information found within this row therefore it will be removed from the dataset 
 rows_missing
 
     # Remove row 
 ufo <- ufo[!is.na(ufo$duration_seconds), ] # Removing row with NA value 
 rownames(ufo) <- NULL # Reseting row index 
+missing_values # double check to see if there are any additional missing values 
 View(ufo) # Updated dataset 
 
 # Format - numbers are not rounded to the same number of decimal points within the column
@@ -111,7 +115,8 @@ View(ufo) # Updated dataset
 # Range - does not provide the true minimum and maximum values 
 min_duration <- min(ufo$duration_seconds)
 max_duration <- max(ufo$duration_seconds)
-
+min_duration
+max_duration # not the true maximum duration reported in the duration_seconds column
     # Clean the duration_seconds column
 ufo$duration_seconds <- gsub("[^0-9.]", "", ufo$duration_seconds) # Removes any non-numeric characters from the "duration_seconds" column, keeping only digits and periods
 ufo$duration_seconds <- as.numeric(ufo$duration_seconds)
