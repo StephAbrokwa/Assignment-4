@@ -111,7 +111,7 @@ min_duration <- min(ufo$duration_seconds)
 max_duration <- max(ufo$duration_seconds)
 
     # Clean the duration_seconds column
-ufo$duration_seconds <- gsub("[^0-9.]", "", ufo$duration_seconds)
+ufo$duration_seconds <- gsub("[^0-9.]", "", ufo$duration_seconds) # Removes any non-numeric characters from the "duration_seconds" column, keeping only digits and periods
 ufo$duration_seconds <- as.numeric(ufo$duration_seconds)
 min_duration_2 <- min(ufo$duration_seconds)
 min_duration_2
@@ -122,3 +122,7 @@ max_duration_2
 print(paste("The Range for duration_seconds is", min_duration_2, "-", max_duration_2, "seconds"))
 
 # 11. Create a histogram using the "duration seconds" column
+
+filtered_duration <- ufo$duration_seconds[is.finite(ufo$duration_seconds) & !is.na(ufo$duration_seconds)] # Filter out non-finite and non-numeric values
+log_duration <- log(filtered_duration) # Apply a logarithmic transformation to the filtered duration values to produce a histogram representative of all the data 
+hist(log_duration, breaks = "FD", main = "Duration Seconds Histogram (Log Scale)", xlab = "Log Duration Seconds") # Histogram of the logarithmic values 
