@@ -104,7 +104,8 @@ rows_missing
     # Remove row 
 ufo <- ufo[!is.na(ufo$duration_seconds), ] # Removing row with NA value 
 rownames(ufo) <- NULL # Reseting row index 
-missing_values # double check to see if there are any additional missing values 
+missing_values_2 <- sum(is.na(ufo$duration_seconds))
+missing_values_2 # double check to see if there are any additional missing values 
 View(ufo) # Updated dataset 
 
 # Format - numbers are not rounded to the same number of decimal points within the column
@@ -130,6 +131,5 @@ print(paste("The Range for duration_seconds is", min_duration_2, "-", max_durati
 
 # 11. Create a histogram using the "duration seconds" column
 
-filtered_duration <- ufo$duration_seconds[is.finite(ufo$duration_seconds) & !is.na(ufo$duration_seconds)] # Filter out non-finite and non-numeric values
-log_duration <- log(filtered_duration) # Apply a logarithmic transformation to the filtered duration values to produce a histogram representative of all the data 
-hist(log_duration, breaks = "FD", main = "Duration Seconds Histogram (Log Scale)", xlab = "Log Duration Seconds") # Histogram of the logarithmic values 
+log10_duration <- log10(filtered_duration) # Apply a logarithmic transformation to the filtered duration values to produce a histogram representative of all the data 
+hist(log10_duration, breaks = "FD", main = "Duration Seconds Histogram (Log Scale)", xlab = "Log Duration Seconds") # Histogram of the logarithmic values 
