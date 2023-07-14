@@ -131,5 +131,4 @@ print(paste("The Range for duration_seconds is", min_duration_2, "-", max_durati
 
 # 11. Create a histogram using the "duration seconds" column
 
-log10_duration <- log10(filtered_duration) # Apply a logarithmic transformation to the filtered duration values to produce a histogram representative of all the data 
-hist(log10_duration, breaks = "FD", main = "Duration Seconds Histogram (Log Scale)", xlab = "Log Duration Seconds") # Histogram of the logarithmic values 
+hist(log10(ufo$duration_seconds), main = "Histogram of Sighting Durations in Seconds", xlab = "Log10 of sighting duration (seconds)", ylab = "Frequency") # Histogram of the logarithmic values to produce a histogram representative of all the data 
