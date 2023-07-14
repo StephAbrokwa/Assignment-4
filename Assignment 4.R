@@ -29,42 +29,44 @@ View(ufo) # Updated dataset
 
 # 5. Figure out a way to identify possible hoax reports. Create a new boolean column "is_hoax", and populate this column with TRUE if the sighting is a possible hoax, FALSE if otherwise 
 
-# Install and load the 'dplyr' and 'tidyr' packages for text mining 
+ufo$is_hoax <- FALSE 
 
-install.packages("dplyr") # Install package
-library(dplyr) # Load package
-install.packages("tidyr") # Install package
-library(tidyr) # Load package
-
-is_hoax <- function(comment) {
-  hoax_keywords <- c("HOAX", "Hoax")
-  comment <- tolower(comment)
-  has_keyword <- any(grepl(paste0("\\b", paste(hoax_keywords, collapse = "|"), "\\b"), comment))
-  return(has_keyword)
+for (i in 1:nrow(ufo)) {
+  if (!is.na(ufo$comments[i]) &&
+      (grepl("HOAX", ufo$comments[i], ignore.case = TRUE) ||
+       grepl("Hoax", ufo$comments[i], ignore.case = TRUE) ||
+       grepl("hoax", ufo$comments[i], ignore.case = TRUE))) {
+    ufo$is_hoax[i] <- TRUE
+  }
 }
 
-ufo <- transform(ufo, comments = as.character(comments))
-ufo <- tidyr::seprate_rows(ufo, comments, sep = "\\s")
-ufo <- subset(ufo, comments != "")
-
-# str(ufo)
+View(ufo)
 
 # 6. Create a table reporting the percentage of hoax sightings per country 
 
-install.packages("data.table")
-library(data.table)
+# Calculate the number of hoax sightings per country
+hoax_counts <- aggregate(is_hoax ~ country, data = ufo, FUN = sum)
 
-ufo_dt <- as.data.table(ufo)
+# Calculate the total number of sightings per country
+total_counts <- table(ufo$country)
 
-ufo_dt <- ufo_dt[!is.na(comments) & !is.na(country)]
+# Calculate the percentage of hoax sightings per country and round to the nearest hundredth
+percentage_hoax <- round(hoax_counts$is_hoax / total_counts * 100, 2)
 
-sightings_per_country <- ufo_dt[, .(total_sightings = .N), by = country]
+# Create the summary table
+summary_table <- data.frame(
+  country = names(total_counts),
+  hoax_sightings = hoax_counts$is_hoax,
+  total_sightings = as.numeric(total_counts),
+  percentage_hoax = percentage_hoax
+)
 
-hoax_sightings_per_country <- ufo_dt[is_hoax(comments), .(hoax_sightings = .N), by = country]
+#Remove the percentage_hoax.Var1 column 
+summary_table$percentage_hoax.Var1 <- NULL 
 
-percentage_hoax_sightings <- merge(hoax_sightings_per_country, sightings_per_country, by = "country", all.x = TRUE) [, percentage_hoax := (hoax_sightings / as.numeric(total_sightings)) * 100]
+# Print the table
+print(summary_table)
 
-View(percentage_hoax_sightings)
 # 7. Add another column to the dataset (report_delay) and populate with the time difference in days, between the date of the sighting and the date it was reported 
 
 # 8. Remove the rows where the sighting was reported before it happened 
