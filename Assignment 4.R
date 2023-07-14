@@ -82,6 +82,43 @@ View(ufo) # Updated dataset
 
 # 9. Create a table reporting the average report_delay per country 
 
+avg_report_delay <- aggregate(report_delay ~ country, data = ufo, FUN = mean) # Calculate the average report_delay per country
+avg_report_delay$report_delay <- round(avg_report_delay$report_delay) # Round the average report_delay to the nearest day for continuity 
+
+# Print the table
+print(avg_report_delay)
+
 # 10. Check the data quality (missingness, format, range, etc) of the "duration seconds" column. Explain what kinds of problems you have identified and how you chose to deal with them, in your comments 
+
+# Missingness - 1 NA value 
+missing_values <- sum(is.na(ufo$duration_seconds)) # Displays that only 1 row contains a missing value 
+missing_values
+rows_missing <- which(is.na(ufo$duration_seconds)) # Indicates which row that is (row 8937) - there is no information found within this row therefore it will be removed from the dataset 
+rows_missing
+
+    # Remove row 
+ufo <- ufo[!is.na(ufo$duration_seconds), ] # Removing row with NA value 
+rownames(ufo) <- NULL # Reseting row index 
+View(ufo) # Updated dataset 
+
+# Format - numbers are not rounded to the same number of decimal points within the column
+ufo$duration_seconds <- as.numeric(ufo$duration_seconds) # Convert "duration_seconds" column to numeric
+ufo$duration_seconds <- sprintf("%.2f", ufo$duration_seconds) # Format numbers in duration_seconds to two decimal places
+View(ufo) # Updated dataset 
+
+# Range - does not provide the true minimum and maximum values 
+min_duration <- min(ufo$duration_seconds)
+max_duration <- max(ufo$duration_seconds)
+
+    # Clean the duration_seconds column
+ufo$duration_seconds <- gsub("[^0-9.]", "", ufo$duration_seconds)
+ufo$duration_seconds <- as.numeric(ufo$duration_seconds)
+min_duration_2 <- min(ufo$duration_seconds)
+min_duration_2
+max_duration_2 <- max(ufo$duration_seconds)
+max_duration_2
+
+    # Actual Range 
+print(paste("The Range for duration_seconds is", min_duration_2, "-", max_duration_2, "seconds"))
 
 # 11. Create a histogram using the "duration seconds" column
